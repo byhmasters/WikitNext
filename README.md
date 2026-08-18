@@ -6,7 +6,7 @@
 ### 1. 依赖
 `npm install`
 ### Vercel→Storage→你的数据库→.env.local里复制数据库URL
-`export DATABASE_URL='postgres://USER:PASSWORD@HOST/DB?sslmode=require'`
+`$env:DATABASE_URL='postgres://USER:PASSWORD@HOST/DB?sslmode=require'`
 
 `npm run db:push`
 ### 3. (可选)初始页面
