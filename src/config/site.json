@@ -1,0 +1,11 @@
+{
+  "slug": "wikit",
+  "title": "WikitNext",
+  "headline": "Wikidot Replacement",
+  "homePage": "main",
+  "theme": {
+    "mode": "external",
+    "css": "",
+    "externalUrl": "/sigma9.css"
+  }
+}
