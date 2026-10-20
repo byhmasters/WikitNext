@@ -18,7 +18,7 @@ export function LogoutButton() {
         });
       }}
     >
-      {pending ? '登出中…' : '登出'}
+      {pending ? dict.nav.loggingOut : dict.nav.logout}
     </a>
   );
 }

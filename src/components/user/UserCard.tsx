@@ -58,13 +58,13 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
           <div className="title">
             <span className="printuser w-user">{data?.displayName ?? handle}</span>
             <a className="close-button btn btn-default" href="#" onClick={(e) => { e.preventDefault(); onClose(); }}>
-              关闭
+              {dict.common.close}
             </a>
           </div>
 
           {error ? (
             <div className="content">
-              <p className="wkt-muted">找不到该用户。</p>
+              <p className="wkt-muted">{dict.userCard.notFound}</p>
             </div>
           ) : !data ? (
             <div className="content">
@@ -74,7 +74,7 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
             <div className="content">
               <div className="wkt-tabs">
                 <a href="#" className={tab === 'about' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setTab('about'); }}>
-                  资料
+                  {dict.userCard.tabAbout}
                 </a>
                 <a href="#" className={tab === 'pages' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setTab('pages'); }}>
                   创建的页面（{data.pages.length}）
@@ -111,7 +111,7 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
                       </tr>
                     ) : null}
                     <tr>
-                      <td>加入时间</td>
+                      <td>{dict.userCard.joined}</td>
                       <td>{new Date(data.createdAt).toLocaleDateString()}</td>
                     </tr>
                     {data.bio ? (
@@ -134,7 +134,7 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
                     ))}
                   </ul>
                 ) : (
-                  <p className="wkt-muted">还没有创建页面。</p>
+                  <p className="wkt-muted">{dict.userCard.noPages}</p>
                 )
               ) : null}
 
@@ -151,7 +151,7 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
                     ))}
                   </ul>
                 ) : (
-                  <p className="wkt-muted">还没有编辑记录。</p>
+                  <p className="wkt-muted">{dict.userCard.noEdits}</p>
                 )
               ) : null}
 
@@ -168,7 +168,7 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
                     ))}
                   </ul>
                 ) : (
-                  <p className="wkt-muted">还没有评论。</p>
+                  <p className="wkt-muted">{dict.userCard.noComments}</p>
                 )
               ) : null}
             </div>

@@ -14,7 +14,7 @@ interface EditorViewProps {
   onSaved: () => void;
 }
 
-export function EditorView({ category, name, title: initialTitle, source: initialSource, isNew, onCancel, onSaved }: EditorViewProps) {
+export function EditorView({ category, name, title: initialTitle, source: initialSource, isNew, onCancel, onSaved, dict }: EditorViewProps & { dict: import('@/lib/locales/i18n').Dictionary }) {
   const [title, setTitle] = useState(initialTitle);
   const [source, setSource] = useState(initialSource);
   const [comment, setComment] = useState('');
@@ -45,14 +45,14 @@ export function EditorView({ category, name, title: initialTitle, source: initia
   return (
     <>
       <a className="action-area-close btn btn-default" href="#" onClick={(e) => { e.preventDefault(); onCancel(); }}>
-        关闭
+        {dict.common.close}
       </a>
-      <h1>{isNew ? '创建页面' : '编辑页面'}</h1>
+      <h1>{isNew ? dict.editor.createTitle : dict.editor.editTitle}</h1>
       <form id="edit-page-form" onSubmit={(e) => e.preventDefault()}>
         <table className="form">
           <tbody>
             <tr>
-              <td>页面标题:</td>
+              <td>{dict.editor.pageTitle}</td>
               <td>
                 <input
                   id="edit-page-title"
@@ -81,12 +81,12 @@ export function EditorView({ category, name, title: initialTitle, source: initia
             spellCheck={false}
             onChange={(e) => setSource(e.target.value)}
             disabled={pending}
-            placeholder="在此输入 Wikidot 源代码…"
+            placeholder={dict.editor.placeholder}
           />
           <div className="wt-editor-preview" dangerouslySetInnerHTML={{ __html: preview }} />
         </div>
 
-        <p>更改摘要:</p>
+        <p>{dict.editor.comment}</p>
         <textarea
           id="edit-page-comments"
           name="comment"
@@ -102,7 +102,7 @@ export function EditorView({ category, name, title: initialTitle, source: initia
             id="edit-cancel-button"
             className="btn btn-danger"
             type="button"
-            value="取消"
+            value={dict.common.cancel}
             onClick={onCancel}
             disabled={pending}
           />
@@ -110,7 +110,7 @@ export function EditorView({ category, name, title: initialTitle, source: initia
             id="edit-save-button"
             className="btn btn-primary"
             type="button"
-            value={pending ? '保存中…' : '保存'}
+            value={pending ? dict.common.saving : dict.editor.save}
             onClick={save}
             disabled={pending}
           />

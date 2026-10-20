@@ -8,8 +8,8 @@ interface SourceViewProps {
   onClose: () => void;
 }
 
-export function SourceView({ pageId, ordinal = null, onClose }: SourceViewProps) {
-  const [source, setSource] = useState('加载中…');
+export function SourceView({ pageId, ordinal = null, onClose, dict }: { pageId: number, ordinal?: number | null, onClose: () => void, dict: import('@/lib/locales/i18n').Dictionary }) {
+  const [source, setSource] = useState('{dict.common.loading}');
 
   useEffect(() => {
     let active = true;
@@ -27,9 +27,9 @@ export function SourceView({ pageId, ordinal = null, onClose }: SourceViewProps)
   return (
     <>
       <a className="action-area-close btn btn-default" href="#" onClick={(e) => { e.preventDefault(); onClose(); }}>
-        关闭
+        {dict.common.close}
       </a>
-      <h1>页面源代码{ordinal != null ? `（版本 #${ordinal}）` : ''}</h1>
+      <h1>{dict.page.source}{ordinal != null ? `（版本 #${ordinal}）` : ''}</h1>
       <div className="page-source">
         <pre className="wkt-source">{source}</pre>
       </div>

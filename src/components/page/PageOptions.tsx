@@ -33,7 +33,7 @@ interface PageOptionsProps {
   canContribute: boolean;
 }
 
-export function PageOptions(props: PageOptionsProps) {
+export function PageOptions(props: PageOptionsProps & { dict: import('@/lib/locales/i18n').Dictionary }) {
   const [subView, setSubView] = useState<SubView | null>(
     props.initialAction === 'edit' && props.canEdit ? 'edit' : null,
   );
@@ -103,7 +103,7 @@ export function PageOptions(props: PageOptionsProps) {
       <div id="page-options-bottom" className="page-options-bottom">
         {props.canEdit ? (
           <a id="edit-button" className="btn btn-default" href="#" onClick={toggle('edit')}>
-            {props.hasPage ? '编辑' : '创建'}
+            {props.hasPage ? dict.page.edit : dict.page.createAction}
           </a>
         ) : null}
         {props.hasPage ? (
@@ -112,25 +112,25 @@ export function PageOptions(props: PageOptionsProps) {
               {ratingLabel}
             </a>
             <a id="tags-button" className="btn btn-default" href="#" onClick={toggle('tags')}>
-              标签
+              {dict.page.tags}
             </a>
             <a id="discuss-button" className="btn btn-default" href="#" onClick={toggle('discuss')}>
               {discussLabel}
             </a>
             <a id="history-button" className="btn btn-default" href="#" onClick={toggle('history')}>
-              历史记录
+              {dict.page.history}
             </a>
           </>
         ) : null}
         <a id="more-options-button" className="btn btn-default" href="#" onClick={(e) => { e.preventDefault(); setExtOpen((v) => !v); }}>
-          {extOpen ? '-' : '+'}&nbsp;选项
+          {extOpen ? '-' : '+'}&nbsp;{dict.page.options}
         </a>
       </div>
 
       {extOpen && props.hasPage ? (
         <div id="page-options-bottom-2" className="page-options-bottom form-actions">
           <a id="view-source-button" className="btn btn-default" href="#" onClick={toggle('source')}>
-            页面源代码
+            {dict.page.source}
           </a>
           {props.canManage ? (
             <>
@@ -140,7 +140,7 @@ export function PageOptions(props: PageOptionsProps) {
                 href="#"
                 onClick={(e) => { e.preventDefault(); setDialog('lock'); }}
               >
-                {props.locked ? '解锁页面' : '锁定页面'}
+                {props.locked ? dict.page.unlock : dict.page.lock}
               </a>
               <a
                 id="rename-move-button"
@@ -152,7 +152,7 @@ export function PageOptions(props: PageOptionsProps) {
                   setDialog('rename');
                 }}
               >
-                重新命名
+                {dict.page.rename}
               </a>
               <a
                 id="delete-button"
@@ -160,7 +160,7 @@ export function PageOptions(props: PageOptionsProps) {
                 href="#"
                 onClick={(e) => { e.preventDefault(); setDialog('delete'); }}
               >
-                删除
+                {dict.page.delete}
               </a>
             </>
           ) : null}
@@ -188,7 +188,7 @@ export function PageOptions(props: PageOptionsProps) {
 
       {dialog === 'lock' ? (
         <ConfirmDialog
-          title={props.locked ? '解锁页面' : '锁定页面'}
+          title={props.locked ? dict.page.unlock : dict.page.lock}
           message={props.locked ? '解锁后所有人都可以再次编辑此页面。' : '锁定后只有管理员可以编辑此页面。'}
           confirmLabel={props.locked ? '解锁' : '锁定'}
           onConfirm={doLock}
@@ -198,7 +198,7 @@ export function PageOptions(props: PageOptionsProps) {
 
       {dialog === 'rename' ? (
         <ConfirmDialog
-          title="重新命名 / 移动"
+          title="{dict.page.rename} / 移动"
           message={
             <>
               <p>输入新的完整名称（分类:名称）：</p>
@@ -220,9 +220,9 @@ export function PageOptions(props: PageOptionsProps) {
 
       {dialog === 'delete' ? (
         <ConfirmDialog
-          title="删除页面"
-          message="此操作会永久删除该页面及其全部历史，无法撤销。"
-          confirmLabel="删除"
+          title="{dict.page.delete}页面"
+          message="此操作会永久{dict.page.delete}该页面及其全部历史，无法撤销。"
+          confirmLabel="{dict.page.delete}"
           danger
           onConfirm={doDelete}
           onCancel={() => setDialog(null)}

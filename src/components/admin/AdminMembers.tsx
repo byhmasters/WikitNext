@@ -14,15 +14,7 @@ export interface MemberRow {
   createdAt: string;
 }
 
-export function AdminMembers({
-  members,
-  meId,
-  canGrant,
-}: {
-  members: MemberRow[];
-  meId: number;
-  canGrant: boolean;
-}) {
+export function AdminMembers({ members, meId, canGrant, dict }: { members: MemberRow[]; meId: number; canGrant: boolean; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [pending, start] = useTransition();
   const router = useRouter();
 

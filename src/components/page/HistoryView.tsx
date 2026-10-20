@@ -32,7 +32,7 @@ interface HistoryViewProps {
 
 type Subarea = { kind: 'source'; ordinal: number } | { kind: 'version'; ordinal: number; html: string } | null;
 
-export function HistoryView({ pageId, onClose }: HistoryViewProps) {
+export function HistoryView({ pageId, onClose, dict }: { pageId: number; onClose: () => void; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [entries, setEntries] = useState<HistoryRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [subarea, setSubarea] = useState<Subarea>(null);
@@ -74,22 +74,22 @@ export function HistoryView({ pageId, onClose }: HistoryViewProps) {
   return (
     <>
       <a className="action-area-close btn btn-default" href="#" onClick={(e) => { e.preventDefault(); onClose(); }}>
-        关闭
+        {dict.common.close}
       </a>
-      <h1>页面更改历史</h1>
+      <h1>{dict.history.title}</h1>
       <div id="revision-list" className={loading ? 'loading' : ''}>
         <div className="buttons">
-          <input type="button" className="btn btn-default btn-sm" value="更新列表" onClick={load} />
+          <input type="button" className="btn btn-default btn-sm" value={dict.history.refresh} onClick={load} />
         </div>
         <table className="page-history">
           <tbody>
             <tr>
-              <td>版本</td>
-              <td>标记</td>
-              <td>操作</td>
-              <td>由</td>
-              <td>日期</td>
-              <td>评论</td>
+              <td>{dict.history.colVersion}</td>
+              <td>{dict.history.colFlag}</td>
+              <td>{dict.history.colAction}</td>
+              <td>{dict.history.colBy}</td>
+              <td>{dict.history.colDate}</td>
+              <td>{dict.history.colComment}</td>
             </tr>
             {entries.map((e) => {
               const [letter, tip] = FLAGS[e.changeKind] ?? ['·', e.changeKind];

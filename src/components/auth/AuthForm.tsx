@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { login, register } from '@/lib/actions/auth';
 
-export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
+export function AuthForm({ mode, dict }: { mode: 'login' | 'register'; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [handle, setHandle] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -31,7 +31,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   return (
     <div className="wkt-auth-layer">
       <div className="owindow">
-        <div className="title">{isLogin ? '登录' : '创建账户'}</div>
+        <div className="title">{isLogin ? dict.auth.loginTitle : dict.auth.registerTitle}</div>
         <div className="content">
           <form
             onSubmit={(e) => {
@@ -41,7 +41,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
           >
             <p>
               <label>
-                用户名
+                {dict.auth.username}
                 <input
                   className="wt-wide-input"
                   type="text"
@@ -54,7 +54,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
             </p>
             <p>
               <label>
-                密码
+                {dict.auth.password}
                 <input
                   className="wt-wide-input"
                   type="password"
@@ -69,11 +69,11 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
               <input
                 className="btn btn-primary"
                 type="submit"
-                value={pending ? '请稍候…' : isLogin ? '登录' : '注册'}
+                value={pending ? dict.auth.submitting : isLogin ? dict.common.login : dict.common.register}
                 disabled={pending}
               />
               <a className="btn btn-default" href={isLogin ? '/register' : '/login'}>
-                {isLogin ? '还没有账户？注册' : '已有账户？登录'}
+                {isLogin ? dict.auth.toRegister : dict.auth.toLogin}
               </a>
             </div>
           </form>

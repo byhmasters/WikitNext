@@ -16,10 +16,10 @@ interface ConfirmDialogProps {
 // .odialog-shader / .owindow / .button-bar are Wikidot's own dialog classes from base.css;
 // centering is JS-driven in real Wikidot, so we wrap in .wkt-dialog-layer and center ourselves.
 export function ConfirmDialog({
-  title = '请确认',
+  title = dict.common.confirm,
   message,
-  confirmLabel = '确定',
-  cancelLabel = '取消',
+  confirmLabel = dict.common.confirm,
+  cancelLabel = dict.common.cancel,
   danger = false,
   onConfirm,
   onCancel,

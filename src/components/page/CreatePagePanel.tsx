@@ -12,7 +12,7 @@ interface CreatePagePanelProps {
   canCreate: boolean;
 }
 
-export function CreatePagePanel({ category, name, title, basePath, canCreate }: CreatePagePanelProps) {
+export function CreatePagePanel({ category, name, title, basePath, canCreate, dict }: { category: string; name: string; title: string; basePath: string; canCreate: boolean; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [editing, setEditing] = useState(false);
   const router = useRouter();
 

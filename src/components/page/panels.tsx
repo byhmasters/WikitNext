@@ -9,7 +9,7 @@ import { addComment, castVote, deleteComment, setTags } from '@/lib/actions/page
 function CloseLink({ onClose }: { onClose: () => void }) {
   return (
     <a className="action-area-close btn btn-default" href="#" onClick={(e) => { e.preventDefault(); onClose(); }}>
-      关闭
+      {dict.common.close}
     </a>
   );
 }
@@ -30,11 +30,11 @@ export function TagsView({ pageId, tags, onClose }: { pageId: number; tags: stri
   return (
     <>
       <CloseLink onClose={onClose} />
-      <h1>页面标签</h1>
-      <p>用空格分隔多个标签。</p>
-      <input className="wt-wide-input" type="text" value={value} onChange={(e) => setValue(e.target.value)} placeholder="例如：指南 帮助 草稿" />
+      <h1>{dict.panels.tagsTitle}</h1>
+      <p>{dict.panels.tagsHint}</p>
+      <input className="wt-wide-input" type="text" value={value} onChange={(e) => setValue(e.target.value)} placeholder={dict.panels.tagsPlaceholder} />
       <div className="buttons alignleft">
-        <input className="btn btn-primary" type="button" value={pending ? '保存中…' : '保存'} onClick={save} disabled={pending} />
+        <input className="btn btn-primary" type="button" value={pending ? dict.common.saving : dict.common.save} onClick={save} disabled={pending} />
       </div>
     </>
   );
@@ -75,16 +75,16 @@ export function RatingView({ pageId, onClose }: { pageId: number; onClose: () =>
   return (
     <>
       <CloseLink onClose={onClose} />
-      <h1>页面评分</h1>
+      <h1>{dict.panels.ratingTitle}</h1>
       {data ? (
         <>
           <p className="wt-rating">
-            当前得分 <strong>{data.score >= 0 ? `+${data.score}` : data.score}</strong>（+{data.up} / −{data.down}）
+            {dict.panels.ratingScore} <strong>{data.score >= 0 ? `+${data.score}` : data.score}</strong>（+{data.up} / −{data.down}）
           </p>
           <div className="buttons alignleft">
-            <input className="btn btn-default" type="button" value="▲ 赞成" onClick={() => vote(1)} disabled={pending} />
-            <input className="btn btn-default" type="button" value="▼ 反对" onClick={() => vote(-1)} disabled={pending} />
-            <input className="btn btn-default" type="button" value="取消投票" onClick={() => vote(0)} disabled={pending} />
+            <input className="btn btn-default" type="button" value={dict.panels.voteUp} onClick={() => vote(1)} disabled={pending} />
+            <input className="btn btn-default" type="button" value={dict.panels.voteDown} onClick={() => vote(-1)} disabled={pending} />
+            <input className="btn btn-default" type="button" value={dict.panels.voteCancel} onClick={() => vote(0)} disabled={pending} />
           </div>
           {data.voters.length > 0 ? (
             <table className="wt-simple-table wt-voters">
@@ -198,7 +198,7 @@ export function DiscussView({ pageId, onClose }: { pageId: number; onClose: () =
   return (
     <>
       <CloseLink onClose={onClose} />
-      <h1>讨论</h1>
+      <h1>{dict.panels.discussTitle}</h1>
       {roots == null ? (
         <p>加载中…</p>
       ) : roots.length === 0 ? (
@@ -221,9 +221,9 @@ export function DiscussView({ pageId, onClose }: { pageId: number; onClose: () =
       )}
 
       <div className="wt-new-comment">
-        <textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} placeholder="发表评论…" />
+        <textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} placeholder={dict.panels.commentPlaceholder} />
         <div className="buttons alignleft">
-          <input className="btn btn-primary" type="button" value={pending ? '发送中…' : '发表'} onClick={post} disabled={pending || !body.trim()} />
+          <input className="btn btn-primary" type="button" value={pending ? dict.panels.posting : dict.panels.post} onClick={post} disabled={pending || !body.trim()} />
         </div>
       </div>
 

@@ -13,7 +13,7 @@ export interface SiteSettings {
   themeExternalUrl: string;
 }
 
-export function AdminSiteSettings({ initial, writable }: { initial: SiteSettings; writable: boolean }) {
+export function AdminSiteSettings({ initial, writable, dict }: { initial: SettingsSite; writable: boolean; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [form, setForm] = useState<SiteSettings>(initial);
   const [msg, setMsg] = useState<string | null>(null);
   const [pending, start] = useTransition();
