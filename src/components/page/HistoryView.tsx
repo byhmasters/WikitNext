@@ -16,20 +16,6 @@ interface HistoryRow {
   handle: string;
 }
 
-const FLAGS: Record<string, [string, string]> = {
-  new: ['N', '新页面'],
-  source: ['S', '源代码更改'],
-  title: ['T', '标题更改'],
-  tags: ['A', '标签更改'],
-  rename: ['R', '重命名'],
-  revert: ['W', '还原'],
-};
-
-interface HistoryViewProps {
-  pageId: number;
-  onClose: () => void;
-}
-
 type Subarea = { kind: 'source'; ordinal: number } | { kind: 'version'; ordinal: number; html: string } | null;
 
 export function HistoryView({ pageId, onClose, dict }: { pageId: number; onClose: () => void; dict: import('@/lib/locales/i18n').Dictionary }) {
@@ -92,7 +78,8 @@ export function HistoryView({ pageId, onClose, dict }: { pageId: number; onClose
               <td>{dict.history.colComment}</td>
             </tr>
             {entries.map((e) => {
-              const [letter, tip] = FLAGS[e.changeKind] ?? ['·', e.changeKind];
+              const tip = dict.history.flags[e.changeKind as keyof typeof dict.history.flags] || e.changeKind;
+              const letter = (e.changeKind[0] || '·').toUpperCase();
               return (
                 <tr key={e.ordinal} id={`revision-row-${e.ordinal}`}>
                   <td>{e.ordinal}.</td>
@@ -102,14 +89,14 @@ export function HistoryView({ pageId, onClose, dict }: { pageId: number; onClose
                     </span>
                   </td>
                   <td className="optionstd">
-                    <a href="#" title="查看此版本" onClick={(ev) => { ev.preventDefault(); viewVersion(e.ordinal); }}>
+                    <a href="#" title={dict.history.view} onClick={(ev) => { ev.preventDefault(); viewVersion(e.ordinal); }}>
                       V
                     </a>
-                    <a href="#" title="查看源代码" onClick={(ev) => { ev.preventDefault(); setSubarea({ kind: 'source', ordinal: e.ordinal }); }}>
+                    <a href="#" title={dict.history.viewSource} onClick={(ev) => { ev.preventDefault(); setSubarea({ kind: 'source', ordinal: e.ordinal }); }}>
                       S
                     </a>
                     {e.ordinal !== latest ? (
-                      <a href="#" title="回退到此版本" onClick={(ev) => { ev.preventDefault(); setConfirmRevert(e.ordinal); }}>
+                      <a href="#" title={dict.history.revert} onClick={(ev) => { ev.preventDefault(); setConfirmRevert(e.ordinal); }}>
                         R
                       </a>
                     ) : null}
@@ -126,11 +113,11 @@ export function HistoryView({ pageId, onClose, dict }: { pageId: number; onClose
 
       <div id="history-subarea">
         {subarea?.kind === 'source' ? (
-          <SourceView pageId={pageId} ordinal={subarea.ordinal} onClose={() => setSubarea(null)} />
+          <SourceView pageId={pageId} ordinal={subarea.ordinal} onClose={() => setSubarea(null)} dict={dict} />
         ) : null}
         {subarea?.kind === 'version' ? (
           <>
-            <div className="wt-version-msg">正在查看版本 #{subarea.ordinal}（只读预览）。</div>
+            <div className="wt-version-msg">{dict.history.viewing.replace('{ordinal}', subarea.ordinal.toString())}</div>
             <div className="page-content-version" dangerouslySetInnerHTML={{ __html: subarea.html }} />
           </>
         ) : null}
@@ -138,11 +125,12 @@ export function HistoryView({ pageId, onClose, dict }: { pageId: number; onClose
 
       {confirmRevert !== null ? (
         <ConfirmDialog
-          title="回退版本"
-          message={`确定回退到版本 #${confirmRevert}？这会以该版本的源代码新建一条修订。`}
-          confirmLabel="回退"
+          title={dict.history.revertTitle}
+          message={dict.history.revertMsg.replace('{ordinal}', confirmRevert.toString())}
+          confirmLabel={dict.history.revert}
           onConfirm={() => doRevert(confirmRevert)}
           onCancel={() => setConfirmRevert(null)}
+          dict={dict}
         />
       ) : null}
     </>
