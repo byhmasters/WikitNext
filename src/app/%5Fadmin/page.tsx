@@ -10,15 +10,17 @@ import { getCurrentAccount } from '@/lib/auth/session';
 import { canManageMembers, isAdmin } from '@/lib/auth/perms';
 import { canWriteConfig } from '@/lib/wikit/config';
 import { displayFullname, pagePath } from '@/lib/wikit/names';
+import { getDictionary } from '@/lib/locales/i18n';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
   const me = await getCurrentAccount();
-  // 只有 admin 或有成员管理权者能看后台；否则当作页面不存在
   if (!canManageMembers(me)) notFound();
 
+  const dict = await getDictionary('zh-hans');
   const site = await getSite();
+  
   const [navTopHtml, navSideHtml, recent, members] = await Promise.all([
     renderNav('nav:top', site.slug),
     renderNav('nav:side', site.slug),
@@ -50,20 +52,20 @@ export default async function AdminPage() {
       siteHeadline={site.headline}
       navTopHtml={navTopHtml}
       navSideHtml={navSideHtml}
-      title="管理面板"
+      title={dict.admin.title}
     >
       <div id="page-content" className="wkt-admin">
-        <h2>最近编辑</h2>
+        <h2>{dict.admin.recentEdits}</h2>
         {recent.length ? (
           <table className="wt-simple-table">
             <tbody>
               <tr>
-                <td>页面</td>
-                <td>版本</td>
-                <td>类型</td>
-                <td>作者</td>
-                <td>时间</td>
-                <td>说明</td>
+                <td>{dict.admin.colPage}</td>
+                <td>{dict.admin.colVersion}</td>
+                <td>{dict.admin.colType}</td>
+                <td>{dict.admin.colAuthor}</td>
+                <td>{dict.admin.colTime}</td>
+                <td>{dict.admin.colComment}</td>
               </tr>
               {recent.map((r, i) => {
                 const ref = { category: r.category, name: r.name };
@@ -91,10 +93,10 @@ export default async function AdminPage() {
             </tbody>
           </table>
         ) : (
-          <p className="wkt-muted">还没有编辑记录。</p>
+          <p className="wkt-muted">{dict.admin.noEdits}</p>
         )}
 
-        <h2>成员与权限</h2>
+        <h2>{dict.admin.membersTitle}</h2>
         <AdminMembers
           members={members.map((m) => ({
             id: m.id,
@@ -107,9 +109,10 @@ export default async function AdminPage() {
           }))}
           meId={me!.id}
           canGrant={grant}
+          dict={dict}
         />
 
-        <h2>站点设置</h2>
+        <h2>{dict.admin.siteSettings}</h2>
         {grant ? (
           <AdminSiteSettings
             writable={canWriteConfig()}
@@ -121,9 +124,10 @@ export default async function AdminPage() {
               themeCss: site.theme.css,
               themeExternalUrl: site.theme.externalUrl,
             }}
+            dict={dict}
           />
         ) : (
-          <p className="wkt-muted">仅管理员可修改站点设置。</p>
+          <p className="wkt-muted">{dict.admin.siteSettingsDenied}</p>
         )}
       </div>
     </Shell>
