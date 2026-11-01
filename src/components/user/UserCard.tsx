@@ -24,7 +24,7 @@ interface UserData {
 
 type Tab = 'about' | 'pages' | 'edits' | 'comments';
 
-export function UserCard({ handle, onClose }: { handle: string; onClose: () => void }) {
+export function UserCard({ handle, onClose, dict }: { handle: string; onClose: () => void; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [data, setData] = useState<UserData | null>(null);
   const [error, setError] = useState(false);
   const [tab, setTab] = useState<Tab>('about');
@@ -68,7 +68,7 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
             </div>
           ) : !data ? (
             <div className="content">
-              <p className="wkt-muted">加载中…</p>
+              <p className="wkt-muted">{dict.common.loading}</p>
             </div>
           ) : (
             <div className="content">
@@ -77,13 +77,13 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
                   {dict.userCard.tabAbout}
                 </a>
                 <a href="#" className={tab === 'pages' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setTab('pages'); }}>
-                  创建的页面（{data.pages.length}）
+                  {dict.userCard.tabPages.replace('{count}', data.pages.length.toString())}
                 </a>
                 <a href="#" className={tab === 'edits' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setTab('edits'); }}>
-                  最近编辑（{data.edits.length}）
+                  {dict.userCard.tabEdits.replace('{count}', data.edits.length.toString())}
                 </a>
                 <a href="#" className={tab === 'comments' ? 'active' : ''} onClick={(e) => { e.preventDefault(); setTab('comments'); }}>
-                  评论（{data.comments.length}）
+                  {dict.userCard.tabComments.replace('{count}', data.comments.length.toString())}
                 </a>
               </div>
 
@@ -91,18 +91,18 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
                 <table className="wt-simple-table">
                   <tbody>
                     <tr>
-                      <td>用户名</td>
+                      <td>{dict.auth.username}</td>
                       <td>{data.displayName}</td>
                     </tr>
                     {data.gender ? (
                       <tr>
-                        <td>性别</td>
+                        <td>{dict.auth.gender}</td>
                         <td>{data.gender}</td>
                       </tr>
                     ) : null}
                     {data.website ? (
                       <tr>
-                        <td>网站</td>
+                        <td>{dict.auth.website}</td>
                         <td>
                           <a href={data.website} target="_blank" rel="noopener">
                             {data.website}
@@ -116,7 +116,7 @@ export function UserCard({ handle, onClose }: { handle: string; onClose: () => v
                     </tr>
                     {data.bio ? (
                       <tr>
-                        <td>个人简介</td>
+                        <td>{dict.auth.bio}</td>
                         <td>{data.bio}</td>
                       </tr>
                     ) : null}
