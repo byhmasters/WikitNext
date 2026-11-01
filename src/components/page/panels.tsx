@@ -6,7 +6,7 @@ import { ConfirmDialog } from '@/components/chrome/Dialog';
 import { UserName } from '@/components/user/UserName';
 import { addComment, castVote, deleteComment, setTags } from '@/lib/actions/page-admin';
 
-function CloseLink({ onClose }: { onClose: () => void }) {
+function CloseLink({ onClose, dict }: { onClose: () => void; dict: import('@/lib/locales/i18n').Dictionary }) {
   return (
     <a className="action-area-close btn btn-default" href="#" onClick={(e) => { e.preventDefault(); onClose(); }}>
       {dict.common.close}
@@ -14,7 +14,7 @@ function CloseLink({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function TagsView({ pageId, tags, onClose }: { pageId: number; tags: string[]; onClose: () => void }) {
+export function TagsView({ pageId, tags, onClose, dict }: { pageId: number; tags: string[]; onClose: () => void; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [value, setValue] = useState(tags.join(' '));
   const [pending, start] = useTransition();
   const router = useRouter();
@@ -29,7 +29,7 @@ export function TagsView({ pageId, tags, onClose }: { pageId: number; tags: stri
 
   return (
     <>
-      <CloseLink onClose={onClose} />
+      <CloseLink onClose={onClose} dict={dict} />
       <h1>{dict.panels.tagsTitle}</h1>
       <p>{dict.panels.tagsHint}</p>
       <input className="wt-wide-input" type="text" value={value} onChange={(e) => setValue(e.target.value)} placeholder={dict.panels.tagsPlaceholder} />
@@ -47,7 +47,7 @@ interface Voter {
   createdAt: string;
 }
 
-export function RatingView({ pageId, onClose }: { pageId: number; onClose: () => void }) {
+export function RatingView({ pageId, onClose, dict }: { pageId: number; onClose: () => void; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [data, setData] = useState<{ score: number; up: number; down: number; voters: Voter[] } | null>(null);
   const [pending, start] = useTransition();
   const router = useRouter();
@@ -68,13 +68,13 @@ export function RatingView({ pageId, onClose }: { pageId: number; onClose: () =>
     start(async () => {
       await castVote(pageId, value);
       await load();
-      router.refresh(); // keep the option-bar score in sync
+      router.refresh();
     });
   }
 
   return (
     <>
-      <CloseLink onClose={onClose} />
+      <CloseLink onClose={onClose} dict={dict} />
       <h1>{dict.panels.ratingTitle}</h1>
       {data ? (
         <>
@@ -90,25 +90,25 @@ export function RatingView({ pageId, onClose }: { pageId: number; onClose: () =>
             <table className="wt-simple-table wt-voters">
               <tbody>
                 <tr>
-                  <td>用户</td>
-                  <td>投票</td>
-                  <td>时间</td>
+                  <td>{dict.panels.voterUser}</td>
+                  <td>{dict.panels.voterVote}</td>
+                  <td>{dict.panels.voterTime}</td>
                 </tr>
                 {data.voters.map((v, i) => (
                   <tr key={i}>
                     <td><UserName name={v.name} handle={v.handle} /></td>
-                    <td>{v.value > 0 ? '▲ 赞成' : '▼ 反对'}</td>
+                    <td>{v.value > 0 ? dict.panels.voteUp : dict.panels.voteDown}</td>
                     <td>{new Date(v.createdAt).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
-            <p>还没有人投票。</p>
+            <p>{dict.panels.noVotes}</p>
           )}
         </>
       ) : (
-        <p>加载中…</p>
+        <p>{dict.common.loading}</p>
       )}
     </>
   );
@@ -124,7 +124,7 @@ interface CommentNode {
   replies: CommentNode[];
 }
 
-export function DiscussView({ pageId, onClose }: { pageId: number; onClose: () => void }) {
+export function DiscussView({ pageId, onClose, dict }: { pageId: number; onClose: () => void; dict: import('@/lib/locales/i18n').Dictionary }) {
   const [roots, setRoots] = useState<CommentNode[] | null>(null);
   const [body, setBody] = useState('');
   const [reply, setReply] = useState<{ id: number; parentId: number; replyToName: string | null } | null>(null);
@@ -150,7 +150,7 @@ export function DiscussView({ pageId, onClose }: { pageId: number; onClose: () =
       await addComment(pageId, body);
       setBody('');
       await load();
-      router.refresh(); // keep the option-bar count in sync
+      router.refresh();
     });
   }
   function sendReply() {
@@ -180,15 +180,15 @@ export function DiscussView({ pageId, onClose }: { pageId: number; onClose: () =
       </div>
       <div className="wt-post-body">{c.body}</div>
       <div className="wt-post-actions">
-        <a href="#" onClick={(e) => { e.preventDefault(); setReply({ id: c.id, ...replyCtx }); setReplyText(''); }}>回复</a>
-        <a href="#" onClick={(e) => { e.preventDefault(); setConfirmDelete({ id: c.id, hasReplies: c.replies.length > 0 }); }}>删除</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); setReply({ id: c.id, ...replyCtx }); setReplyText(''); }}>{dict.panels.reply}</a>
+        <a href="#" onClick={(e) => { e.preventDefault(); setConfirmDelete({ id: c.id, hasReplies: c.replies.length > 0 }); }}>{dict.common.delete}</a>
       </div>
       {reply?.id === c.id ? (
         <div className="wt-reply-box">
-          <textarea rows={2} value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder="回复…" />
+          <textarea rows={2} value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder={dict.panels.replyPlaceholder} />
           <div className="buttons alignleft">
-            <input className="btn btn-primary" type="button" value="发表" onClick={sendReply} disabled={pending || !replyText.trim()} />
-            <input className="btn btn-default" type="button" value="取消" onClick={() => setReply(null)} />
+            <input className="btn btn-primary" type="button" value={dict.panels.post} onClick={sendReply} disabled={pending || !replyText.trim()} />
+            <input className="btn btn-default" type="button" value={dict.common.cancel} onClick={() => setReply(null)} />
           </div>
         </div>
       ) : null}
@@ -197,21 +197,19 @@ export function DiscussView({ pageId, onClose }: { pageId: number; onClose: () =
 
   return (
     <>
-      <CloseLink onClose={onClose} />
+      <CloseLink onClose={onClose} dict={dict} />
       <h1>{dict.panels.discussTitle}</h1>
       {roots == null ? (
-        <p>加载中…</p>
+        <p>{dict.common.loading}</p>
       ) : roots.length === 0 ? (
-        <p>还没有评论。</p>
+        <p>{dict.panels.noComments}</p>
       ) : (
         <div className="wt-thread">
           {roots.map((c) => (
             <div key={c.id}>
-              {/* replying to a top-level comment: nests under it, no "re:" */}
               {renderPost(c, { parentId: c.id, replyToName: null }, false)}
               {c.replies.length > 0 ? (
                 <div className="wt-replies">
-                  {/* replying to a reply: stays at this level, prefixed "re: <that reply's author>" */}
                   {c.replies.map((r) => renderPost(r, { parentId: c.id, replyToName: r.author }, true))}
                 </div>
               ) : null}
@@ -229,16 +227,17 @@ export function DiscussView({ pageId, onClose }: { pageId: number; onClose: () =
 
       {confirmDelete !== null ? (
         <ConfirmDialog
-          title="删除评论"
+          title={dict.panels.deleteCommentTitle}
           message={
             confirmDelete.hasReplies
-              ? '删除这条评论？它下面的所有回复也会一并删除。'
-              : '删除这条评论？'
+              ? dict.panels.deleteCommentMsgReplies
+              : dict.panels.deleteCommentMsg
           }
-          confirmLabel="删除"
+          confirmLabel={dict.common.delete}
           danger
           onConfirm={() => doRemove(confirmDelete.id)}
           onCancel={() => setConfirmDelete(null)}
+          dict={dict}
         />
       ) : null}
     </>
